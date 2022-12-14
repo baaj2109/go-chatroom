@@ -24,6 +24,7 @@ func WebSocketHandleFunc(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// 1. new user join
+	token := req.FormValue("token")
 	nickname := req.FormValue("nickname")
 	if l := len(nickname); l < 2 || l > 20 {
 		log.Println("nickname length should between 2-20")
@@ -36,7 +37,7 @@ func WebSocketHandleFunc(w http.ResponseWriter, req *http.Request) {
 		wsjson.Write(req.Context(), conn, logic.NewErrorMessage(" nickname already exists"))
 		return
 	}
-	user := model.NewUser(conn, nickname, req.RemoteAddr)
+	user := model.NewUser(conn, nickname, token, req.RemoteAddr)
 
 	/// 開啟給使用者發送訊息的 go routine
 	go user.ReceiveMessage(req.Context())

@@ -10,6 +10,7 @@ const (
 	MessageTypeUserEnter
 	MessageTypeUserLeave
 	MessageTypeError
+	MessageTypeUserList
 )
 
 type Message struct {
@@ -18,5 +19,9 @@ type Message struct {
 	Content        string    `json:"content"`
 	MsgTime        time.Time `json:"msg_time"`
 	ClientSendTime time.Time `json:"client_send_time"`
-	Ats            []string  `json:"ats"` //message @ whom
+	//message @ whom
+	Ats []string `json:"ats"`
+	// 私密訊息
+	To    string           `json:"to"`
+	Users map[string]*User `json:"users"`
 }

@@ -21,7 +21,7 @@ func Init() {
 	})
 }
 
-// inferRootDir 推断出项目根目录
+// / 找出項目根目錄
 func inferRootDir() {
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -31,13 +31,12 @@ func inferRootDir() {
 	/// recursive call infer 判斷目錄 d 下面使否存在 template
 	var infer func(d string) string
 	infer = func(d string) string {
-		// 这里要确保项目根目录下存在 template 目录
+		/// 確定根目錄下有 template
 		if exists(d + "/template") {
 			return d
 		}
 		return infer(filepath.Dir(d))
 	}
-
 	RootDir = infer(cwd)
 }
 

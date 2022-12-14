@@ -28,10 +28,10 @@ type User struct {
 	Addr           string
 	EnterAt        time.Time
 	MessageChannel chan *Message
-	// Token          string
-	conn    *websocket.Conn
-	isNew   bool
-	message map[string]string
+	Token          string
+	conn           *websocket.Conn
+	IsNew          bool
+	message        map[string]string
 }
 
 func (u *User) String() string {
@@ -84,29 +84,29 @@ func (u *User) LoadMessage(ctx context.Context) error {
 	}
 }
 
-// func NewUser(conn *websocket.Conn, token, nickname, addr string) *User {
-func NewUser(conn *websocket.Conn, nickname string, addr string) *User {
+func NewUser(conn *websocket.Conn, token, nickname, addr string) *User {
+	// func NewUser(conn *websocket.Conn, nickname string, addr string) *User {
 	user := &User{
 		NickName:       nickname,
 		Addr:           addr,
 		EnterAt:        time.Now(),
 		MessageChannel: make(chan *Message, 32),
-		// Token:          token,
+		Token:          token,
 
 		conn: conn,
 	}
 
-	// if user.Token != "" {
-	// 	uid, err := parseTokenAndValidate(token, nickname)
-	// 	if err == nil {
-	// 		user.ID = uid
-	// 	}
-	// }
+	if user.Token != "" {
+		uid, err := parseTokenAndValidate(token, nickname)
+		if err == nil {
+			user.ID = uid
+		}
+	}
 
 	if user.ID == 0 {
 		user.ID = int(atomic.AddUint32(&globalUID, 1))
-		// user.Token = genToken(user.ID, user.NickName)
-		user.isNew = true
+		user.Token = genToken(user.ID, user.NickName)
+		user.IsNew = true
 	}
 
 	return user

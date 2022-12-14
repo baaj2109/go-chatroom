@@ -2,6 +2,8 @@ package server
 
 import (
 	"chatroom/global"
+	"chatroom/logic"
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -16,7 +18,21 @@ func homeHandleFunc(w http.ResponseWriter, req *http.Request) {
 
 	err = tpl.Execute(w, nil)
 	if err != nil {
-		fmt.Fprint(w, "模板执行錯誤！")
+		fmt.Fprint(w, "模板執行錯誤！")
 		return
+	}
+}
+
+func userListHandleFunc(w http.ResponseWriter, req *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	userList := logic.Broadcaster.GetUserList()
+	b, err := json.Marshal(userList)
+
+	if err != nil {
+		fmt.Fprint(w, `[]`)
+	} else {
+		fmt.Fprint(w, string(b))
 	}
 }

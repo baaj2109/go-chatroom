@@ -88,13 +88,34 @@ func (b *broadcaster) Start() {
 			}
 
 		case msg := <-b.messageChannel:
-			for _, user := range b.users {
-				if user.ID == msg.User.ID {
-					continue
+
+			if msg.To == "" {
+				// 給所有人發訊息
+				for _, user := range b.users {
+					if user.ID == msg.User.ID {
+						continue
+					}
+					user.MessageChannel <- msg
 				}
-				user.MessageChannel <- msg
+			} else {
+				if user, ok := b.users[msg.To]; ok {
+					user.MessageChannel <- msg
+				} else {
+					///  msg.To 不在線上
+					log.Println("user: ", msg.To, "not exists")
+				}
 			}
-			// OfflineProcessor.Save(msg)
+
+			OfflineProcessor.Save(msg)
 		}
 	}
 }
+
+// func (b *broadcaster) sendUserList() {
+// 	// 避免死锁，存在用户看到的列表没及时更新的可能性
+// 	if len(b.messageChannel) < config.MessageQueueLen {
+// 		b.messageChannel <- NewUserListMessage(b.users)
+// 	} else {
+// 		log.Println("消息并发量过大，导致 MessageChannel 拥堵。。。")
+// 	}
+// }

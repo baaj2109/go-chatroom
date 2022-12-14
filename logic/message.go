@@ -55,3 +55,12 @@ func NewErrorMessage(content string) *model.Message {
 		MsgTime: time.Now(),
 	}
 }
+
+// func NewUserListMessage(users map[string]*model.User) *model.Message {
+// 	return &model.Message{
+// 		User:    model.System,
+// 		Type:    model.MessageTypeUserList,
+// 		MsgTime: time.Now(),
+// 		Users:   users,
+// 	}
+// }
